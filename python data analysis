@@ -1,0 +1,58 @@
+import csv
+
+def read_csv_fieldnames(filename, separator, quote):
+    with open(filename, 'r', newline='') as file:
+        reader = csv.reader(file, delimiter=separator, quotechar=quote)
+        fieldnames = next(reader)
+    return fieldnames
+
+def read_csv_as_list_dict(filename, separator, quote):
+    with open(filename, 'r', newline='') as file:
+        reader = csv.DictReader(file, delimiter=separator, quotechar=quote)
+        data = list(reader)
+    return data
+
+def read_csv_as_nested_dict(filename, keyfield, separator, quote):
+    data = {}
+    with open(filename, 'r', newline='') as file:
+        reader = csv.DictReader(file, delimiter=separator, quotechar=quote)
+        for row in reader:
+            if keyfield in row:
+                key = row[keyfield]
+                data[key] = row
+    return data
+
+def write_csv_from_list_dict(filename, table, fieldnames, separator, quote):
+    with open(filename, 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter=separator, quotechar=quote, quoting=csv.QUOTE_MINIMAL)
+        writer.writeheader()
+        writer.writerows(table)
+
+# File path and CSV settings
+filename = r"C:\Users\user\Downloads\cancer_risk05_v4_county (2).csv"
+separator = ","
+quote = '"'
+
+# Example usage:
+
+# Read field names from the CSV file
+fieldnames = read_csv_fieldnames(filename, separator, quote)
+print("Field names:", fieldnames)
+
+# Read CSV data as a list of dictionaries
+data_as_list_dict = read_csv_as_list_dict(filename, separator, quote)
+print("Data as list of dictionaries:")
+for row in data_as_list_dict:
+    print(row)
+
+# Read CSV data as a nested dictionary
+keyfield = "KeyFieldName"
+data_as_nested_dict = read_csv_as_nested_dict(filename, keyfield, separator, quote)
+print("Data as nested dictionary:")
+for key, value in data_as_nested_dict.items():
+    print(key, value)
+
+# Example usage for writing a CSV file
+output_filename = r"C:\Users\user\Downloads\output.csv"
+write_csv_from_list_dict(output_filename, data_as_list_dict, fieldnames, separator, quote)
+print("CSV file written successfully.")
